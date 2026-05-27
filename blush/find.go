@@ -1,9 +1,7 @@
 package blush
 
 import (
-	"fmt"
 	"regexp"
-	"strings"
 )
 
 var (
@@ -26,27 +24,8 @@ type Finder interface {
 // colour also can be in hex format, which should be started with a pound sign
 // (#666).
 func NewLocator(colour, search string, insensitive bool) Finder {
-	c := colorFromArg(colour)
-	if !isRegExp.MatchString(search) {
-		if insensitive {
-			return NewIexact(search, c)
-		}
-		return NewExact(search, c)
-	}
-
-	decore := fmt.Sprintf("(%s)", search)
-	if insensitive {
-		decore = fmt.Sprintf("(?i)%s", decore)
-		if o, err := regexp.Compile(decore); err == nil {
-			return NewRx(o, c)
-		}
-		return NewIexact(search, c)
-	}
-
-	if o, err := regexp.Compile(decore); err == nil {
-		return NewRx(o, c)
-	}
-	return NewExact(search, c)
+	_ = "STUB: not implemented"
+	return *new(Finder)
 }
 
 // Exact looks for the exact word in the string.
@@ -56,38 +35,23 @@ type Exact struct {
 }
 
 // NewExact returns a new instance of the Exact.
-func NewExact(s string, c Colour) Exact {
-	return Exact{
-		s:      s,
-		colour: c,
-	}
-}
+func NewExact(s string, c Colour) Exact { _ = "STUB: not implemented"; return *new(Exact) }
 
 // Find looks for the exact string. Any strings it finds will be decorated with
 // the given Colour.
-func (e Exact) Find(input string) (string, bool) {
-	if strings.Contains(input, e.s) {
-		return e.colourise(input, e.colour), true
-	}
-	return "", false
-}
+func (e Exact) Find(input string) (string, bool) { _ = "STUB: not implemented"; return "", false }
 
-func (e Exact) colourise(input string, c Colour) string {
-	if c == NoColour {
-		return input
-	}
-	return strings.ReplaceAll(input, e.s, Colourise(e.s, c))
-}
+func (e Exact) colourise(input string, c Colour) string { _ = "STUB: not implemented"; return "" }
 
 // Colour returns the Colour property.
 func (e Exact) Colour() Colour {
-	return e.colour
+	_ = "STUB: not implemented"
+
+	// String will returned the colourised contents.
+	return *new(Colour)
 }
 
-// String will returned the colourised contents.
-func (e Exact) String() string {
-	return e.colourise(e.s, e.colour)
-}
+func (e Exact) String() string { _ = "STUB: not implemented"; return "" }
 
 // Iexact is like Exact but case insensitive.
 type Iexact struct {
@@ -96,41 +60,23 @@ type Iexact struct {
 }
 
 // NewIexact returns a new instance of the Iexact.
-func NewIexact(s string, c Colour) Iexact {
-	return Iexact{
-		s:      s,
-		colour: c,
-	}
-}
+func NewIexact(s string, c Colour) Iexact { _ = "STUB: not implemented"; return *new(Iexact) }
 
 // Find looks for the exact string. Any strings it finds will be decorated with
 // the given Colour.
-func (i Iexact) Find(input string) (string, bool) {
-	if strings.Contains(strings.ToLower(input), strings.ToLower(i.s)) {
-		return i.colourise(input, i.colour), true
-	}
-	return "", false
-}
+func (i Iexact) Find(input string) (string, bool) { _ = "STUB: not implemented"; return "", false }
 
-func (i Iexact) colourise(input string, c Colour) string {
-	if c == NoColour {
-		return input
-	}
-	index := strings.Index(strings.ToLower(input), strings.ToLower(i.s))
-	end := len(i.s) + index
-	match := input[index:end]
-	return strings.ReplaceAll(input, match, Colourise(match, c))
-}
+func (i Iexact) colourise(input string, c Colour) string { _ = "STUB: not implemented"; return "" }
 
 // Colour returns the Colour property.
 func (i Iexact) Colour() Colour {
-	return i.colour
+	_ = "STUB: not implemented"
+
+	// String will returned the colourised contents.
+	return *new(Colour)
 }
 
-// String will returned the colourised contents.
-func (i Iexact) String() string {
-	return i.colourise(i.s, i.colour)
-}
+func (i Iexact) String() string { _ = "STUB: not implemented"; return "" }
 
 // Rx is the regexp implementation of the Locator.
 type Rx struct {
@@ -139,30 +85,13 @@ type Rx struct {
 }
 
 // NewRx returns a new instance of the Rx.
-func NewRx(r *regexp.Regexp, c Colour) Rx {
-	return Rx{
-		Regexp: r,
-		colour: c,
-	}
-}
+func NewRx(r *regexp.Regexp, c Colour) Rx { _ = "STUB: not implemented"; return *new(Rx) }
 
 // Find looks for the string matching `r` regular expression. Any strings it
 // finds will be decorated with the given Colour.
-func (r Rx) Find(input string) (string, bool) {
-	if r.MatchString(input) {
-		return r.colourise(input, r.colour), true
-	}
-	return "", false
-}
+func (r Rx) Find(input string) (string, bool) { _ = "STUB: not implemented"; return "", false }
 
-func (r Rx) colourise(input string, c Colour) string {
-	if c == NoColour {
-		return input
-	}
-	return r.ReplaceAllString(input, Colourise("$1", c))
-}
+func (r Rx) colourise(input string, c Colour) string { _ = "STUB: not implemented"; return "" }
 
 // Colour returns the Colour property.
-func (r Rx) Colour() Colour {
-	return r.colour
-}
+func (r Rx) Colour() Colour { _ = "STUB: not implemented"; return *new(Colour) }

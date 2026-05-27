@@ -2,9 +2,7 @@ package reader
 
 import (
 	"io"
-	"os"
 
-	"github.com/arsham/blush/internal/tools"
 	"github.com/pkg/errors"
 )
 
@@ -22,19 +20,8 @@ type MultiReader struct {
 // NewMultiReader creates an instance of the MultiReader and passes it to all
 // input functions.
 func NewMultiReader(input ...Conf) (*MultiReader, error) {
-	m := &MultiReader{
-		readers: make([]*container, 0),
-	}
-	for _, c := range input {
-		if c == nil {
-			return nil, ErrNoReader
-		}
-		err := c(m)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return m, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Conf is used to configure the MultiReader.
@@ -43,92 +30,30 @@ type Conf func(*MultiReader) error
 // WithReader adds the {name,r} reader to the MultiReader. If name is empty, the
 // key will not be written in the output. You can provide as many empty names as
 // you need.
-func WithReader(name string, r io.ReadCloser) Conf {
-	return func(m *MultiReader) error {
-		if r == nil {
-			return errors.Wrap(ErrNoReader, "WithReader")
-		}
-		c := &container{
-			get: func() (io.ReadCloser, error) {
-				m.currentName = name
-				return r, nil
-			},
-		}
-		m.readers = append(m.readers, c)
-		return nil
-	}
-}
+func WithReader(name string, r io.ReadCloser) Conf { _ = "STUB: not implemented"; return *new(Conf) }
 
 // WithPaths searches through the path and adds any files it finds to the
 // MultiReader. Each path will become its reader's name in the process. It
 // returns an error if any of given files are not found. It ignores any files
 // that cannot be read or opened.
-func WithPaths(paths []string, recursive bool) Conf {
-	return func(m *MultiReader) error {
-		if paths == nil {
-			return errors.Wrap(ErrNoReader, "WithPaths: nil paths")
-		}
-		if len(paths) == 0 {
-			return errors.Wrap(ErrNoReader, "WithPaths: empty paths")
-		}
-		files, err := tools.Files(recursive, paths...)
-		if err != nil {
-			return errors.Wrap(err, "WithPaths")
-		}
-		for _, name := range files {
-			name := name
-			c := &container{
-				get: func() (io.ReadCloser, error) {
-					m.currentName = name
-					f, err := os.Open(name) // nolint:gosec // we need this.
-					return f, err
-				},
-			}
-			m.readers = append(m.readers, c)
-		}
-		return nil
-	}
-}
+func WithPaths(paths []string, recursive bool) Conf { _ = "STUB: not implemented"; return *new(Conf) }
+
+// nolint:gosec // we need this.
 
 // Read is almost the exact implementation of io.MultiReader but keeps track of
 // reader names. It closes each reader once they report they are exhausted, and
 // it will happen on the next read.
-func (m *MultiReader) Read(b []byte) (n int, err error) {
-	for len(m.readers) > 0 {
-		if len(m.readers) == 1 {
-			if r, ok := m.readers[0].r.(*MultiReader); ok {
-				m.readers = r.readers
-				continue
-			}
-		}
-		n, err = m.readers[0].Read(b)
-		if errors.Is(err, io.EOF) {
-			err := m.readers[0].r.Close()
-			if err != nil {
-				return n, errors.Wrap(err, "MultiReader.Read")
-			}
-			c := &container{r: io.NopCloser(nil)}
-			m.readers[0] = c
-			m.readers = m.readers[1:]
-		}
-		if n > 0 || !errors.Is(err, io.EOF) {
-			if errors.Is(err, io.EOF) && len(m.readers) > 0 {
-				err = nil
-			}
-			return
-		}
-	}
-	m.currentName = ""
-	return 0, io.EOF
-}
+func (m *MultiReader) Read(b []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 // Close does nothing.
-func (m *MultiReader) Close() error { return nil }
+func (m *MultiReader) Close() error {
+	_ = "STUB: not implemented"
 
-// FileName returns the current reader's name.
-func (m *MultiReader) FileName() string {
-	return m.currentName
+	// FileName returns the current reader's name.
+	return nil
 }
+
+func (m *MultiReader) FileName() string { _ = "STUB: not implemented"; return "" }
 
 // container takes care of opening the reader on demand. This is particularly
 // useful when searching in thousands of files, because we want to open them on
@@ -139,14 +64,4 @@ type container struct {
 	open bool
 }
 
-func (c *container) Read(b []byte) (int, error) {
-	if !c.open {
-		var err error
-		c.r, err = c.get()
-		if err != nil {
-			return 0, err
-		}
-		c.open = true
-	}
-	return c.r.Read(b)
-}
+func (c *container) Read(b []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
